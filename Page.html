@@ -1,0 +1,128 @@
+<html>
+<head>
+    <title>Image OCR App</title>
+</head>
+<body>
+    <h1>Image OCR App</h1>
+
+    <!-- Input for uploading the image -->
+    <input type="file" id="imageUpload" accept=".png">
+    <button id="processButton">Process Image</button>
+
+    <!-- Container for displaying OCR results -->
+    <div id="ocrResults"></div>
+
+    <!-- Tesseract.js library -->
+    <script src="https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js"></script>
+    <script src="https://apis.google.com/js/client.js"></script>
+
+    <script>
+        // JavaScript code for your web app
+        document.getElementById('processButton').addEventListener('click', processImage);
+
+        function processImage() {
+            const imageInput = document.getElementById('imageUpload');
+            const ocrResultsDiv = document.getElementById('ocrResults');
+            
+            const file = imageInput.files[0];
+            
+            if (!file) {
+                alert('Please select an image file.');
+                return;
+            }
+            
+            // Define fixed coordinates for cropping (replace with your actual coordinates)
+            const coordinates = [
+                { x1: 0, y1: 0, x2: 244, y2: 108 },
+                // Define your other sets of coordinates here
+            ];
+            
+            const croppedImages = [];
+            
+            const img = new Image();
+            img.onload = function() {
+                for (let i = 0; i < coordinates.length; i++) {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const { x1, y1, x2, y2 } = coordinates[i];
+                    const width = x2 - x1;
+                    const height = y2 - y1;
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, x1, y1, width, height, 0, 0, width, height);
+                    
+                    croppedImages.push(canvas.toDataURL('image/png'));
+                }
+                
+                // Perform OCR on each cropped image
+                const ocrResults = [];
+                
+                for (let i = 0; i < croppedImages.length; i++) {
+                    const croppedImage = croppedImages[i];
+                    
+                    Tesseract.recognize(
+                        croppedImage,
+                        'eng',
+                        { logger: (info) => console.log(info) }
+                    ).then(({ data: { text } }) => {
+                        ocrResults.push({ set: i + 1, text });
+                        
+                        if (ocrResults.length === croppedImages.length) {
+                            displayResults(ocrResults);
+                        }
+                    });
+                }
+            };
+            
+            img.src = URL.createObjectURL(file);
+        }
+
+        function displayResults(results) {
+            const ocrResultsDiv = document.getElementById('ocrResults');
+            ocrResultsDiv.innerHTML = '';
+            
+            const table = document.createElement('table');
+            
+            for (const result of results) {
+                const row = table.insertRow();
+                const setCell = row.insertCell(0);
+                const textCell = row.insertCell(1);
+                setCell.innerText = `Set ${result.set}`;
+                textCell.innerText = result.text;
+              
+              transferToGoogleSheets(results);
+            }
+            
+            ocrResultsDiv.appendChild(table);
+          
+            
+            // Add code here to transfer the results to Google Sheets
+function transferToGoogleSheets(results) {
+    gapi.load('client', function () {
+        gapi.client.init({
+            apiKey: 'YOUR_API_KEY', // Replace with your API key
+            clientId: 'YOUR_CLIENT_ID', // Replace with your Client ID from the JSON file
+            discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+            scope: 'https://www.googleapis.com/auth/spreadsheets'
+        }).then(function () {
+            gapi.client.sheets.spreadsheets.values.append({
+                spreadsheetId: 'YOUR_SPREADSHEET_ID', // Replace with your spreadsheet ID
+                range: 'A1', // The cell where you want to start adding data
+                valueInputOption: 'RAW',
+                resource: {
+                    values: results.map(result => [result.set, result.text])
+                }
+            }).then(function (response) {
+                console.log('Data transferred successfully!', response);
+            }, function (error) {
+                console.error('Error transferring data to Google Sheets:', error);
+            });
+        });
+    });
+}
+
+        }
+    </script>
+</body>
+</html>
