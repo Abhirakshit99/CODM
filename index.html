@@ -5,19 +5,19 @@
 <body>
     <h1>Image OCR App</h1>
 
-    <!-- Input for uploading the image -->
+
     <input type="file" id="imageUpload" accept=".png">
     <button id="processButton">Process Image</button>
 
     <!-- Container for displaying OCR results -->
     <div id="ocrResults"></div>
 
-    <!-- Tesseract.js library -->
+  
     <script src="https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js"></script>
     <script src="https://apis.google.com/js/client.js"></script>
 
     <script>
-        // JavaScript code for your web app
+        
         document.getElementById('processButton').addEventListener('click', processImage);
 
         function processImage() {
@@ -31,7 +31,7 @@
                 return;
             }
             
-            // Define fixed coordinates for cropping (replace with your actual coordinates)
+            // Define fixed coordinates for cropping 
             const coordinates = [
                 { x1: 0, y1: 0, x2: 244, y2: 108 },
                 // Define your other sets of coordinates here
@@ -55,7 +55,7 @@
                     croppedImages.push(canvas.toDataURL('image/png'));
                 }
                 
-                // Perform OCR on each cropped image
+               
                 const ocrResults = [];
                 
                 for (let i = 0; i < croppedImages.length; i++) {
@@ -97,18 +97,18 @@
             ocrResultsDiv.appendChild(table);
           
             
-            // Add code here to transfer the results to Google Sheets
+            
 function transferToGoogleSheets(results) {
     gapi.load('client', function () {
         gapi.client.init({
-            apiKey: 'YOUR_API_KEY', // Replace with your API key
-            clientId: 'YOUR_CLIENT_ID', // Replace with your Client ID from the JSON file
+            apiKey: 'AIzaSyCHvTuzRTcMezJpIVN3QjunultE74bwVvs', 
+            clientId: '63757614613-ff2h4oo2nohpbo9281mrfan5j33raic3.apps.googleusercontent.com', 
             discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
             scope: 'https://www.googleapis.com/auth/spreadsheets'
         }).then(function () {
             gapi.client.sheets.spreadsheets.values.append({
-                spreadsheetId: 'YOUR_SPREADSHEET_ID', // Replace with your spreadsheet ID
-                range: 'A1', // The cell where you want to start adding data
+                spreadsheetId: '1Wyveq24F0D-MQBYScc7BI1gDvBRWyLK_zVs9CK9_iLM', 
+                range: 'Sheet4', 
                 valueInputOption: 'RAW',
                 resource: {
                     values: results.map(result => [result.set, result.text])
