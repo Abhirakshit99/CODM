@@ -3,14 +3,14 @@
     <title>Image OCR App</title>
 </head>
 <body>
-    <h1>Image oCrrr App</h1>
+    <h1>Image oCCrrr App</h1>
 
 
     <input type="file" id="imageUpload" accept=".png">
     <button id="processButton">Process Image</button>
 
-    <canvas id=document.getElementById('canvas') width="1000" 
-        height="1000" 
+   
+        <canvas id="myGFGCanvas" width="500" height="300" 
         style="border: 5px solid black"> 
 </canvas> 
 
@@ -51,6 +51,12 @@
             ];
             
             const croppedImages = [];
+
+
+            var canvas = document.getElementById("myGFGCanvas");
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(imageInput, 100, 20); 
+
             
             const img = new Image();
             img.src = URL.createObjectURL(imageInput.files[0]);
