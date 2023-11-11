@@ -39,12 +39,21 @@
             // Define fixed coordinates for cropping 
             const coordinates = [
                 { x1: 0, y1: 0, x2: 2114, y2: 1000 },
-                
+                { x1: 320, y1: 50, x2: 520, y2: 200 }, 
+                { x1: 540, y1: 50, x2: 740, y2: 200 }, 
+                { x1: 760, y1: 50, x2: 960, y2: 200 }, 
+                { x1: 100, y1: 220, x2: 300, y2: 370 },
+                { x1: 320, y1: 220, x2: 520, y2: 370 },
+                { x1: 540, y1: 220, x2: 740, y2: 370 }, 
+                { x1: 760, y1: 220, x2: 960, y2: 370 },
+                { x1: 100, y1: 390, x2: 300, y2: 540 }, 
+                { x1: 320, y1: 390, x2: 520, y2: 540 } 
             ];
             
             const croppedImages = [];
             
             const img = new Image();
+            img.src = URL.createObjectURL(imageInput.files[0]);
             img.onload = function() {
                 for (let i = 0; i < coordinates.length; i++) {
                     const canvas = document.createElement('canvas');
