@@ -60,6 +60,10 @@
             
             const img = new Image();
             img.src = URL.createObjectURL(imageInput.files[0]);
+            var canvas = document.getElementById("myGFGCanvas");
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 100, 20); }
+            /*
             img.onload = function() {
                 for (let i = 0; i < coordinates.length; i++) {
                     const canvas = document.createElement('canvas');
